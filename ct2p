@@ -13,7 +13,9 @@ clean_text() {
 }
 
 combine() {
-  convert clean_*.tif "$OUTPUT_DIR/$(date "+%Y%m%d_%H%M%S").pdf"
+  outfile="$OUTPUT_DIR/$(date "+%Y%m%d_%H%M%S").pdf"
+  convert clean_*.tif "$outfile"
+  chmod 666 "$outfile"
 }
 
 cleanup() {
