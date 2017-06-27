@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+INCOMING_DIR=/ct2p/incoming
+OUTPUT_DIR=/ct2p/processed
+
+watch_for_change() {
+  inotifywait --monitor --event create --format %w%f "$INCOMING_DIR"
+}
+
+clean_text() {
+  parallel textcleaner {} clean_{} ::: *.tif
+}
+
+combine() {
+  convert clean_*.tif "$OUTPUT_DIR/$(date "+%Y%m%d_%H%M%S").pdf"
+}
+
+cleanup() {
+  rm *.tif
+}
+
+extract_files() {
+  tar -xzf "$1"
+  rm "$1"
+}
+
+process_file() {
+  while read file; do
+    if [[ "$file" =~ tar\.gz$ ]]; then
+      extract_files "$file"
+      clean_text
+      combine
+      cleanup
+    fi
+  done
+}
+
+watch_for_change | process_file

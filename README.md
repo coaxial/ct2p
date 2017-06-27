@@ -6,3 +6,7 @@ into a single PDF file.
 
 Used in combination with coaxial/insaned-config, because a SBC isn't beefy
 enough to handle imagemagick on more than a couple of pages.
+
+## Credits
+
+Uses GNU parallel by O. Tange, and textcleaner by Fred Weinhaus
