@@ -1,6 +1,7 @@
 FROM ubuntu:16.04
 
-RUN apt update && apt install imagemagick bash parallel inotify-tools -yq &&\
+RUN apt update && apt install uuid-runtime imagemagick bash parallel \
+      inotify-tools -yq &&\
       apt clean &&\
       rm -rf /var/lib/apt/lists/*
 # silence parallel warning to cite (credited in the README)

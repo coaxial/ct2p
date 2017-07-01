@@ -3,37 +3,54 @@ set -euo pipefail
 
 INCOMING_DIR=/ct2p/dropbox
 OUTPUT_DIR=/ct2p/processed
+TMP_DIR_BASE="/tmp"
 
 watch_for_change() {
   inotifywait --monitor --event create --format %w%f "$INCOMING_DIR"
 }
 
+create_tmp_dir() {
+  mkdir -p "$TMP_DIR_BASE/$uuid/pages"
+  mkdir -p "$TMP_DIR_BASE/$uuid/pdf"
+}
+
 clean_text() {
-  parallel textcleaner {} clean_{} ::: *.tif
+  TMP_DIR="$TMP_DIR_BASE/$uuid"
+  parallel textcleaner "{}" "$TMP_DIR/pages/clean_{/}" ::: "$TMP_DIR/pages/"*.tif
 }
 
 combine() {
-  outfile="$OUTPUT_DIR/$(date "+%Y%m%d_%H%M%S").pdf"
-  convert clean_*.tif "$outfile"
-  chmod 666 "$outfile"
+  outfile="$(date "+%Y%m%d_%H%M%S").pdf"
+  TMP_DIR="$TMP_DIR_BASE/$uuid"
+  convert "$TMP_DIR/pages"/clean_*.tif "$TMP_DIR/pdf/$outfile"
+  chmod 666 "$TMP_DIR/pdf/$outfile"
+  mv "$TMP_DIR/pdf/$outfile" "$OUTPUT_DIR/$outfile"
 }
 
 cleanup() {
-  rm *.tif
+  # The Steam lesson (https://github.com/koalaman/shellcheck/wiki/SC2115)
+  rm -rf "${TMP_DIR_BASE:?}/$uuid"
 }
 
 extract_files() {
-  tar -xzf "$1"
+  echo "UUID: $uuid"
+  tar -xzf "$1" --directory="$TMP_DIR_BASE/$uuid/pages"
   rm "$1"
 }
 
 process_file() {
-  while read file; do
+  # -r to avoid mangling \, cf
+  # https://github.com/koalaman/shellcheck/wiki/SC2162
+  while read -r file; do
     if [[ "$file" =~ tar\.gz$ ]]; then
+      export uuid
+      uuid=$(uuidgen)
+      create_tmp_dir
       extract_files "$file"
       clean_text
       combine
       cleanup
+      unset uuid
     fi
   done
 }
