@@ -1,4 +1,4 @@
-# combine-tif2pdf
+# combine-tif2pdf [![Build Status](https://travis-ci.org/coaxial/ct2p.svg?branch=master)](https://travis-ci.org/coaxial/ct2p)
 
 This is a docker container whose sole purpose it to unpack an archive
 containing TIFF images, prep them for OCR using textcleaner, and combine them
@@ -15,17 +15,21 @@ for OCR with textcleaner, and combine them to a single PDF file.
 
 ### General flow
 
+```
 +-----------+     +-----------------+       +-------------+
 |           |     |                 |       |             |
 |  Scanner  +-----> combine-tif2pdf +-------> Mayan EDMS/ |
 |           |     |                 |       | OCR         |
 +-----------+     +-----------------+       +-------------+
+```
 
 ### File flow between directories
 
+```
 +-----------+   +------------------------------+  +-------------+
 | ./dropbox +---> unpack => textcleaner => pdf +--> ./processed |
 +-----------+   +------------------------------+  +-------------+
+```
 
 ### The `dropbox` directory
 
