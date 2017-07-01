@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INCOMING_DIR=/ct2p/incoming
+INCOMING_DIR=/ct2p/dropbox
 OUTPUT_DIR=/ct2p/processed
 
 watch_for_change() {
