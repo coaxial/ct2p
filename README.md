@@ -66,4 +66,5 @@ doesn't have enough RAM or CPU power to do this in any practical way.
 
 Uses [GNU parallel](https://www.gnu.org/software/parallel/) by O. Tange, and
 [textcleaner](http://www.fmwconcepts.com/imagemagick/textcleaner/) by Fred
-Weinhaus
+Weinhaus. For commercial/for-profit use, please refer to the [textcleaner
+LICENSE](LICENSE) file for more information.
