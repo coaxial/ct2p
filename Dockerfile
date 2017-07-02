@@ -12,4 +12,5 @@ RUN mkdir -p /ct2p/dropbox \
       mkdir -p /ct2p/processed
 VOLUME /ct2p/dropbox
 VOLUME /ct2p/processed
+HEALTHCHECK CMD "kill -0 $(cat /var/run/ct2p.pid)"
 ENTRYPOINT ["ct2p"]
