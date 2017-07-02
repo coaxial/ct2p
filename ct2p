@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PIDFILE=/var/run/ct2p.pid
 INCOMING_DIR=/ct2p/dropbox
 OUTPUT_DIR=/ct2p/processed
 TMP_DIR_BASE="/tmp"
+
+create_pidfile() {
+  echo $$ > "$PIDFILE"
+}
 
 watch_for_change() {
   inotifywait --monitor --event create --format %w%f "$INCOMING_DIR"
@@ -55,4 +60,9 @@ process_file() {
   done
 }
 
+create_pidfile
 watch_for_change | process_file
+# Ensure pidfile is deleted if script crashes. It's fine if $PIDFILE is
+# expanded now rather than at when signalled.
+# shellcheck disable=SC2064
+trap "rm -f -- '$PIDFILE'" EXIT
